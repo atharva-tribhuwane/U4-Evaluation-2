@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            background-color: rgb(247, 255, 247);
+        }
+        #cards{
+            width: 80%;
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 30px;
+            margin: auto;
+            margin-top: 3%;
+            /* border: 1px solid green; */
+            padding: 1%;
+        }
+        .card{
+            /* border: 1px solid red; */
+            padding: 8%;
+            border-radius: 12px;
+            background-color: white;
+            box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+        }
+        .card-month{
+            color: rgb(2, 2, 81);
+            background-color: white;
+        }
+        .card-income{
+            color: brown;
+            background-color: white;
+        }
+        .card-expense{
+            color: red;
+            background-color: white;
+        }
+        .card-savings{
+            color: green;
+            background-color: white;
+        }
+
+        #container{
+            background-color: white;
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            margin: auto;
+            /* border: 1px solid rebeccapurple; */
+        }
+
+        #container>form{
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            /* border: 1px solid green; */
+            width: 50%;
+            margin: auto;
+        }
+        #container>form>select,input,label{
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            width: 50%;
+            margin: auto;
+            padding: 1%;
+            margin-top: 1%;
+        }
+        #container>form>button{
+            width:30%;
+            margin: 1%;
+            margin: auto;
+            margin-top: 5%;
+            padding: 2%;
+            border: none;
+            border-radius: 8px;
+            background-color: rgb(2, 2, 81);
+            color: white;
+        }
+       
+        #heading{
+            background-color: white;
+            text-align: center;
+            color: rgb(2, 2, 81);
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1 id="heading">Expense-Tracker</h1>
+        <form id="form">
+            <label for="month">Month: </label>
+           <select name="month" id="month" required>
+               <option></option>
+               <option value="January"> January</option>
+               <option value="February">February</option>
+               <option value="March">March</option>
+               <option value="April">April</option>
+               <option value="May">May</option>
+               <option value="June">June</option>
+               <option value="July">July</option>
+               <option value="August">August</option>
+               <option value="September">September</option>
+               <option value="October">October</option>
+               <option value="November">November</option>
+               <option value="December">December</option>
+           </select>
+           <label for="income">Income: </label>
+           <input type="number" id="income" required>
+           <label for="expense">Expense: </label>
+           <input type="number" id="expense" required>
+           <!-- <label for="savings">Savings: </label> -->
+           <button id="sub">Submit</button>
+        </form>
+    </div>
+
+    <div id="cards">
+
+    </div>
+</body>
+<script>
+    let expense = localStorage.getItem("expense");
+    if(expense == null){
+        localStorage.setItem("expense",JSON.stringify([]));
+    }
+
+    document.querySelector("#sub").addEventListener("click",addItem);
+
+    function addItem(){
+        event.preventDefault();
+        let month = document.getElementById("month").value;
+        let income = document.getElementById("income").value;
+        let expens = document.getElementById("expense").value;
+        
+        if(month=="" || income=="" || expens==""){
+            alert("Enter Valid Data");
+        }
+
+        else{
+            let exp = {
+                month:month,
+                income:income,
+                expense:expens,
+                savings:(income-expens)
+            };
+
+            expense = JSON.parse(localStorage.getItem   ("expense"));
+            expense.push(exp);
+
+            localStorage.setItem("expense", JSON.stringify  (expense));
+
+            displayData();
+        }
+    }
+
+    function displayData(){
+        let cards = document.getElementById("cards");
+        cards.innerHTML="";
+        let cont = document.getElementById("cards");
+        expense = JSON.parse(localStorage.getItem("expense"));
+        expense.forEach(function(mon){
+            let card = document.createElement("div");
+            card.setAttribute("class","card");
+
+            let mo = document.createElement("h2");
+            mo.setAttribute("class","card-month");
+            mo.innerText = mon.month;
+
+            let inc = document.createElement("p");
+            inc.setAttribute("class","card-income");
+            inc.innerHTML =`Your Income is : RS ${mon.income}`;
+
+            let ex = document.createElement("p");
+            ex.setAttribute("class","card-expense");
+            ex.innerHTML =`Your Expense is : Rs ${mon.expense}`;
+
+            let sav = document.createElement("p");
+            sav.setAttribute("class","card-savings");
+            sav.innerHTML =`Your Savings are : Rs ${mon.savings}`;
+
+            card.append(mo,inc,ex,sav);
+            cont.append(card);
+            document.getElementById("form").reset();
+        });
+        localStorage.setItem("expense",JSON.stringify(expense));
+    }
+
+    
+    displayData();
+    // localStorage.clear();
+</script>
+</html>
